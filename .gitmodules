@@ -1,0 +1,3 @@
+[submodule "src/main/java/eu/gir/girsignals/linkableApi"]
+	path = src/main/java/eu/gir/girsignals/linkableApi
+	url = https://github.com/German-Immersive-Railroading-Community/linkableapi

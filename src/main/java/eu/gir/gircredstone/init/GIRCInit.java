@@ -1,9 +1,11 @@
 package eu.gir.gircredstone.init;
 
+import eu.gir.gircredstone.GIRCRedstoneMain;
 import eu.gir.gircredstone.block.BlockRedstoneAcceptor;
 import eu.gir.gircredstone.block.BlockRedstoneEmitter;
-import eu.gir.gircredstone.item.Linkingtool;
+import eu.gir.girsignals.linkableApi.Linkingtool;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
@@ -15,8 +17,10 @@ public class GIRCInit {
 	public static final Block RS_ACCEPTOR = new BlockRedstoneAcceptor();
 	public static final Block RS_EMITTER = new BlockRedstoneEmitter();
 
-	public static final Item RS_LINKER = new Linkingtool();
-	
+	public static final Item RS_LINKER = new Linkingtool(CreativeTabs.REDSTONE,
+			(w, bp) -> w.getBlockState(bp).getBlock() instanceof BlockRedstoneAcceptor)
+					.setRegistryName(GIRCRedstoneMain.MODID, "linker").setUnlocalizedName("linker");
+
 	@SubscribeEvent
 	public static void registerBlock(RegistryEvent.Register<Block> event) {
 		IForgeRegistry<Block> registry = event.getRegistry();
@@ -32,5 +36,4 @@ public class GIRCInit {
 		registry.register(new ItemBlock(RS_EMITTER).setRegistryName(RS_EMITTER.getRegistryName()));
 	}
 
-	
 }

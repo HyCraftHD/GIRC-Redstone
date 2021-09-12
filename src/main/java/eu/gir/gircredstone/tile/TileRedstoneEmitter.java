@@ -1,7 +1,7 @@
 package eu.gir.gircredstone.tile;
 
 import eu.gir.gircredstone.block.BlockRedstoneAcceptor;
-import eu.gir.gircredstone.item.Linkingtool;
+import eu.gir.girsignals.linkableApi.ILinkableTile;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -9,22 +9,33 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
-public class TileRedstoneEmitter extends TileEntity {
+public class TileRedstoneEmitter extends TileEntity implements ILinkableTile {
+
+	private static final String ID_X = "xLinkedPos";
+	private static final String ID_Y = "yLinkedPos";
+	private static final String ID_Z = "zLinkedPos";
 
 	private BlockPos linkedpos = null;
-
+	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		Linkingtool.writeBlockPosToNBT(linkedpos, compound);
+		if (pos != null && compound != null) {
+			compound.setInteger(ID_X, pos.getX());
+			compound.setInteger(ID_Y, pos.getY());
+			compound.setInteger(ID_Z, pos.getZ());
+		}
 		return super.writeToNBT(compound);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		this.linkedpos = Linkingtool.readBlockPosFromNBT(compound);
+		if (compound != null && compound.hasKey(ID_X) && compound.hasKey(ID_Y) && compound.hasKey(ID_Z)) {
+			this.linkedpos = new BlockPos(compound.getInteger(ID_X), compound.getInteger(ID_Y), compound.getInteger(ID_Z));
+		}
 	}
 
+	@Override
 	public boolean link(final BlockPos pos) {
 		if(pos == null)
 			return false;
@@ -32,6 +43,7 @@ public class TileRedstoneEmitter extends TileEntity {
 		return true;
 	}
 	
+	@Override
 	public boolean unlink() {
 		if(this.linkedpos == null)
 			return false;
@@ -63,6 +75,11 @@ public class TileRedstoneEmitter extends TileEntity {
 				provider.queueUnload(lchunk);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasLink() {
+		return this.linkedpos != null;
 	}
 
 }
